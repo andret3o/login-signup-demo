@@ -1,15 +1,15 @@
-package com.web.match_me.security;
+package com.example.demo.security;
 
-
-import com.web.match_me.user.User;
-import com.web.match_me.user.UserDto;
-
+import com.example.demo.user.User;
+import com.example.demo.user.UserDto;
+import com.example.demo.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,13 +18,14 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserDto.SummaryResponse> signUp(@Valid @RequestBody UserDto.CreateRequest userDto) {
-        UserDto.SummaryResponse response = authService.registerUser(userDto);
+    public ResponseEntity<?> signUp(@Valid @RequestBody UserDto userDto) {
+        User user = authService.registerUser(userDto);
 
         String jwt = authService.authenticateUser(
-                new UserDto.LoginRequest(userDto.email(), userDto.password())
+                userDto
         );
 
         ResponseCookie cookie = ResponseCookie.from("access_token", jwt)
@@ -37,15 +38,14 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(response);
+                .build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto.SummaryResponse> login(@Valid @RequestBody UserDto.LoginRequest dto) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserDto dto) {
         String jwt = authService.authenticateUser(dto);
-        User user = authService.getUserByEmail(dto.email());
+        User user = authService.getUserByEmail(dto.getEmail());
 
-        // Create HttpOnly cookie
         ResponseCookie cookie = ResponseCookie.from("access_token", jwt)
                 .httpOnly(true)       // Prevents JavaScript access (XSS protection)
                 .secure(false)       // Set to 'true' in production (requires HTTPS)
@@ -54,12 +54,9 @@ public class AuthController {
                 .sameSite("Lax")     // CSRF protection
                 .build();
 
-        String name = null;
-        String pfpUrl = null;
-
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(new UserDto.SummaryResponse(user.getId(), name, pfpUrl));
+                .build();
     }
 
     @PostMapping("/logout")
@@ -68,7 +65,7 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(false) // Set to true in production
                 .path("/")
-                .maxAge(0)    // 0 means delete immediately
+                .maxAge(0)
                 .sameSite("Lax")
                 .build();
 
@@ -77,5 +74,13 @@ public class AuthController {
                 .body("Logged out successfully");
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> me(@AuthenticationPrincipal UserPrincipal principal){
+        if (principal == null) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        User user = userService.getUserById(principal.getId());
+        return ResponseEntity.ok().build();
+    }
 }
 

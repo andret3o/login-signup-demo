@@ -1,7 +1,7 @@
-package com.web.match_me.security;
+package com.example.demo.security;
 
-import com.web.match_me.user.User;
-import com.web.match_me.user.UserRepository;
+import com.example.demo.user.User;
+import com.example.demo.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,6 +1,6 @@
-package com.web.match_me.security;
+package com.example.demo.security;
 
-import com.web.match_me.user.User;
+import com.example.demo.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: demo
+  datasource:
+    url: jdbc:sqlite:user.db
+    drive-class-name: org.sqlite.JDBC
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+jwt:
+  secret: your-very-secure-secret-key-at-least-256-bits-long
+  expiration: 86400000
+server:
+  port: 8080

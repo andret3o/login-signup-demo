@@ -1,4 +1,4 @@
-package com.web.match_me.security;
+package com.example.demo.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

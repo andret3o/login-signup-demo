@@ -1,4 +1,4 @@
-package com.web.match_me.security;
+package com.example.demo.security;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
