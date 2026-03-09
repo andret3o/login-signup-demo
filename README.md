@@ -14,8 +14,6 @@ A full-stack demonstration application showcasing user authentication with login
 - [Features](#features)
 - [Security Notes](#security-notes)
 
-**How to use:** Click any link above to jump to that section. Works in GitHub, GitLab, and most markdown viewers.
-
 ## Overview
 
 This project demonstrates a complete user authentication flow with:
